@@ -10,6 +10,7 @@ class PatientInformation(models.Model):
     bday = models.DateField(auto_now_add = False)
     contact = models.CharField(max_length = 100, verbose_name = "Contact No.")
     email = models.EmailField(verbose_name= "Email")
+    active = models.BooleanField(default = True)
 
 # PRESCRIPTION PARTS MODELS
 

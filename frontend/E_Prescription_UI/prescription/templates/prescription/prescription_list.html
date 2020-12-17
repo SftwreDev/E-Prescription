@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<div class="container-fluid">
+    {% for message in messages  %}
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{message}}
+    </div>
+    {% endfor %}
+<div class="card shadow">
+<h5 class="card-header">Patient Information</h5>
+<div class="card-body">
+    <h5 class="card-title">{{patient.l_name}}, {{patient.f_name}}</h5>
+    <ul class="list-group list-group-horizontal-sm" style="font-size: 12px;">
+        <li class="list-group-item">Age : {{patient.age}} yrs old</li>
+        <li class="list-group-item">Birthdate : {{patient.bday}}</li>
+        <li class="list-group-item">Contact : {{patient.contact}}</li>
+        <li class="list-group-item">Email : {{patient.email}}</li>
+    </ul>
+</div>
+</div>
+<br>
+<div class="card shadow prescription-card"  style="font-size: 13.5px; margin-bottom: 5rem;">
+
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                <button class=" btn nav-link active " href="#">Active Prescription</button>
+            </li>
+            <li class="nav-item">
+                <button class="btn nav-link button_active" href="#">Prescription History </button>
+            </li>
+            <li>
+                <a class="text-primary nav-link" data-toggle="modal" data-target="#addModal"><i class="fas fa-plus"></i></a>
+            </li>
+        </ul>
+        
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover table-borderless text-center">
+            <thead>
+                <tr class="text-white" style="background-color: #3e64ff;">
+                    
+                    <th scope="col">Drug Name</th>
+                    <th scope="col">Dosage</th>
+                    <th scope="col">Route</th>
+                    <th scope="col">Frequency</th>
+                    <th scope="col">Amount Dispensed</th>
+                    <th scope="col">No of Refills</th>
+                    <th scope="col">Expiration Date</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            {% for list in result %}
+            {% if list.active == True %}
+            <tbody>
+                <tr>
+                    
+                    <td>{{list.drug_name}}</td>
+                    <td>{{list.dosage}}</td>
+                    <td>{{list.route}}</td>
+                    <td>{{list.frequency}}</td>
+                    <td>{{list.amount_dispensed}}</td>
+                    <td>{{list.no_of_refills}}</td>
+                    <td>{{list.expiration_date}}</td>
+                    <td>{{list.date_created}}</td>
+                    <td>
+                            
+                        <span class="badge badge-primary">Active</span>
+                        
+                    </td>
+                    <td>
+                        <a href="{% url 'prescriptions:prescription_active' pk=pk pk2=list.id %}" class="btn btn-danger btn-sm" style="font-size: 12px;"><i class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                
+            </tbody>
+            {% endif %}
+            {% endfor %}
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            </li>
+        </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="card shadow prescription-card"  style="font-size: 13.5px; margin-bottom: 5rem; display: none;">
+
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                <a class="nav-link  button_active" href="#">Active Prescription</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link bg-danger active" href="#">Prescription History</a>
+            </li>
+            <li>
+                <a class="text-primary nav-link" data-toggle="modal" data-target="#addModal"><i class="fas fa-plus"></i></a>
+            </li>
+        </ul>
+        
+    </div>
+    <div class="card-body">
+        <table class="table table-sm table-hover table-borderless text-center">
+            <thead>
+                <tr class="text-white" style="background-color: #3e64ff;">
+                    
+                    <th scope="col">Drug Name</th>
+                    <th scope="col">Dosage</th>
+                    <th scope="col">Route</th>
+                    <th scope="col">Frequency</th>
+                    <th scope="col">Amount Dispensed</th>
+                    <th scope="col">No of Refills</th>
+                    <th scope="col">Expiration Date</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            {% for history in result %}
+            {% if history.active == False %}
+            <tbody>
+                <tr>
+                    
+                    <td>{{history.drug_name}}</td>
+                    <td>{{history.dosage}}</td>
+                    <td>{{history.route}}</td>
+                    <td>{{history.frequency}}</td>
+                    <td>{{history.amount_dispensed}}</td>
+                    <td>{{history.no_of_refills}}</td>
+                    <td>{{history.expiration_date}}</td>
+                    <td>{{history.date_created}}</td>
+                    <td>
+                        
+                        
+                            <span class="badge badge-danger">Not Active</span>
+                        
+                        
+                            
+                    </td>
+                </tr>
+                
+            </tbody>
+            {% endif %}
+            {% endfor %}
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            </li>
+        </ul>
+        </nav>
+    </div>
+</div>
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Prescription</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form  method="POST">
+    <div class="modal-body">
+        {% csrf_token %}
+            <div class="row">
+            
+            <div class="col-md-6">
+                {{form.drug_name|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.dosage|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.route|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.frequency|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.amount_dispensed|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.no_of_refills|as_crispy_field}}
+            </div>
+            <div class="col-md-7">
+                {{form.expiration_date|as_crispy_field}}
+            </div>
+            <div class="col-md-5 mt-5">
+                {{form.active|as_crispy_field}}
+            </div>
+            </div>
+    
+    </div>
+    <div class="modal-footer">
+        <a href="{% url 'prescriptions:prescription_list_view' pk=pk %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+    </form>
+    </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script>
+    $( ".button_active" ).click(function() {
+        $( ".prescription-card" ).toggle();
+    });
+</script>
+    
+{% endblock content %}
