@@ -5,30 +5,25 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import AllowAny
-from prescribe_app.serializers.patient_serializers import ( 
-    PatientInformationSerializer, 
-    PatientDetailSerializer,
-    PatientInformationSerializerActive
+
+from prescribe_app.models.patient_info import PatientInformation
+from prescribe_app.models.notes import Notes
+
+from prescribe_app.serializers.notes_serializers import ( 
+    NotesSerializersView,
+    NotesSerializersPost
 
 )
-from prescribe_app.models.patient_info import PatientInformation
-from prescribe_app.models.prescription import Prescription
 
-
-#######    LIST API VIEW FOR SHOWING THE LIST OF ALL PRESCRIPTION AND PATIENT / POST METHOD FOR ADDING NEW PRESCRIPTION ##########
 @api_view(['GET', 'POST'])
-def patients_view(request):
-
-    if request.method == 'GET':
-        patient = PatientInformation.objects.all()
-        serializer = PatientInformationSerializer(patient, many=True)
-        
-        print(serializer.data)
+def notes_list_and_create_view(request):
+    if request.method == 'GET' :
+        notes = Notes.objects.all()
+        serializer  = NotesSerializersView(notes, many=True)
         return Response(serializer.data)
-    
-    elif request.method == 'POST' :
-        
-        serializer = PatientInformationSerializer(data=request.data)
+
+    elif request.method == 'POST':
+        serializer = NotesSerializersPost(data=request.data)
         if serializer.is_valid():
             serializer.save()
             print("Data is saving")
@@ -41,19 +36,19 @@ def patients_view(request):
 
 #######    DETAIL API VIEW FOR SHOWING THE LIST OF PRESCRIPTION FOR EVERY PATIENT ##########
 @api_view(['GET', 'PUT', 'DELETE'])
-def patient_info_detail(request, pk):
+def notes_info_detail_and_update(request, pk):
     
     if request.method == 'GET':
         patient = PatientInformation.objects.get(id=pk)
+        notes = Notes.objects.get(patient=patient)
         
-        serializer = PatientDetailSerializer(instance=patient)
+        serializer = NotesSerializersView(instance=notes)
         return Response(serializer.data)
-    
     
 
     elif request.method == 'PUT':
-        obj = PatientInformation.objects.get(id=pk)
-        serializer = PatientInformationSerializerActive(instance=obj, data=request.data)
+        obj = Notes.objects.get(id=pk)
+        serializer = NotesSerializersPost(instance=obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
         else:

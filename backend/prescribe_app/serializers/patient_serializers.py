@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
-from .models import Prescription, PatientInformation
+from prescribe_app.models.patient_info import PatientInformation
+from prescribe_app.models.prescription import Prescription
+
+from prescribe_app.serializers.notes_serializers import (
+    NotesSerializersView
+)
 
 class PatientInformationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,28 +24,17 @@ class PrescriptionSerializerView(serializers.ModelSerializer):
     # patient = PatientInformationSerializer()  
     class Meta:
         model = Prescription
-        fields = ['id','drug_name' , 'dosage' , 'route', 'frequency', 'amount_dispensed', 'no_of_refills', 'expiration_date','date_created', 'active']
-    
-class PrescriptionSerializerPostView(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Prescription
-        fields = ['patient','drug_name' , 'dosage' , 'route', 'frequency', 'amount_dispensed', 'no_of_refills', 'expiration_date', 'active']
+        fields = ['id','drug_name' , 'dosage' , 'route', 'frequency', 'amount_dispensed', 'no_of_refills', 'expiration_date','date_created', 'active', 'notes']
 
-
-
-class PrescriptionSerializerPost(serializers.ModelSerializer):
-    class Meta:
-        model = Prescription
-        fields = ['active']
 
 
 #######    SERIALIZER FOR DETAIL VIEW OF ALL PRESCRIPTION PER PATIENT ##########
 class PatientDetailSerializer(serializers.ModelSerializer):
     queryset = Prescription.objects.filter(active="False")
     patient_prescription = PrescriptionSerializerView(many=True, read_only=True)
+    patients_notes = NotesSerializersView(many = True, read_only = True)
     class Meta:
         model = PatientInformation
-        fields = ('id', 'l_name', 'f_name', 'age', 'bday', 'contact', 'email', 'active', 'patient_prescription')
+        fields = ('id', 'l_name', 'f_name', 'age', 'bday', 'contact', 'email', 'active', 'patient_prescription', 'patients_notes')
 
    

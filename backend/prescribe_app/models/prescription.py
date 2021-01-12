@@ -1,17 +1,6 @@
 from django.db import models
 
-
-
-# PATIENT'S INFORMATION
-class PatientInformation(models.Model):
-    l_name = models.CharField(max_length = 100, verbose_name='Last Name')
-    f_name = models.CharField(max_length = 100, verbose_name='First Name')
-    age = models.PositiveIntegerField(verbose_name = "Age")
-    bday = models.DateField(auto_now_add = False)
-    contact = models.CharField(max_length = 100, verbose_name = "Contact No.")
-    email = models.EmailField(verbose_name= "Email")
-    active = models.BooleanField(default = True)
-
+from .patient_info import PatientInformation
 # PRESCRIPTION PARTS MODELS
 
 class Prescription(models.Model):
@@ -24,6 +13,7 @@ class Prescription(models.Model):
     amount_dispensed = models.IntegerField(verbose_name="Amount Dispensed")
     no_of_refills = models.IntegerField(verbose_name = 'No of Refills')
     expiration_date = models.DateField(auto_now_add = False)
+    notes = models.TextField()
     active = models.BooleanField(default=False)
 
     def __str__(self):
